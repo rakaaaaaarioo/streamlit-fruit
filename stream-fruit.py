@@ -20,11 +20,17 @@ def load_model_and_scaler(model_file, scaler_file=None):
     return model, scaler
 
 def predict_fruit(features, model, scaler=None):
+    import numpy as np
+    
+    features = np.array(features).reshape(1, -1)
+
     if scaler:
-        features = scaler.transform([features])
-    prediction_class = model.predict([features])[0]  # Prediksi kelas
-    prediction_label = class_to_label[prediction_class]  # Mapping ke label
+        features = scaler.transform(features)
+    
+    prediction_class = model.predict(features)[0]
+    prediction_label = class_to_label[prediction_class]
     return prediction_label, prediction_class
+
 
 st.title("Aplikasi Prediksi Buah Dengan Model")
 st.write("Pilih algoritma yang digunakan, masukkan fitur buah untuk memprediksi jenis buah.")
@@ -48,62 +54,9 @@ for col in x.columns:
     value = st.number_input(f"Masukkan nilai untuk {col}:", value=0.0)
     input_features.append(value)
 
-if st.button("Prediksi"):
-    label, class_index = predict_fruit(input_features, model, scaler)
-    st.success(f"Model memprediksi jenis buah: {label} (Cluster: {class_index})")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# with open('fruit_RandomForest.pkl', 'rb') as f:
-#     rf_model = pickle.load(f)
-
-# with open('fruit_Perceptron.pkl', 'rb') as f:
-#     svm_model = pickle.load(f)
-
-# with open('fruit_SVM.pkl', 'rb') as f:
-#     perceptron_model = pickle.load(f)
-
-# with open('fruit_KMeans.pkl', 'rb') as f:
-#     kmeans_model = pickle.load(f)
-
-# st.title("Aplikasi Prediksi Model")
-
-# # Input untuk model klasifikasi
-# feature1 = st.number_input("Random Forest Clasifier")
-# feature2 = st.number_input("Perceptron")
-# feature3 = st.number_input("SVM")
-# feature4 = st.number_input("Kmeans")
-# # Tambahkan input sesuai kebutuhan model Anda
-
-# # Tombol untuk melakukan prediksi
-# if st.button("Prediksi"):
-#     # Lakukan prediksi menggunakan model yang dipilih
-#     prediction_rf = rf_model.predict([[feature1, feature2]])
-#     st.write(f"Prediksi Random Forest: {prediction_rf}")
-
-#     prediction_svm = svm_model.predict([[feature1, feature2]])
-#     st.write(f"Prediksi SVM: {prediction_svm}")
-
-#     prediction_perceptron = perceptron_model.predict([[feature1, feature2]])
-#     st.write(f"Prediksi Perceptron: {prediction_perceptron}")
-
-#     # Untuk K-Means, Anda mungkin ingin menampilkan cluster
-#     cluster = kmeans_model.predict([[feature1, feature2]])
-#     st.write(f"Cluster K-Means: {cluster}")
+if all(input_features):  # Pastikan semua input ada
+    if st.button("Prediksi"):
+        label, class_index = predict_fruit(input_features, model, scaler)
+        st.success(f"Model memprediksi jenis buah: {label} (Cluster: {class_index})")
+else:
+    st.warning("Harap masukkan semua nilai fitur sebelum memprediksi.")
