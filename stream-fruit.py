@@ -21,25 +21,11 @@ def load_model_and_scaler(model_file, scaler_file=None):
             scaler = pickle.load(f)
     return model, scaler
 
-import numpy as np
-
 def predict_fruit(features, model, scaler=None):
-    # Ubah fitur ke array numpy dan reshape ke 2D
-    features = np.array(features).reshape(1, -1)
-    
-    # Debugging: Periksa bentuk data
-    print("Bentuk fitur untuk prediksi:", features.shape)
-    
-    # Gunakan scaler jika ada
     if scaler:
-        features = scaler.transform(features)
-    
-    # Prediksi kelas
-    prediction_class = model.predict(features)[0]
-    
-    # Mapping kelas ke label
-    prediction_label = class_to_label[prediction_class]
-    
+        features = scaler.transform([features])
+    prediction_class = model.predict([features])[0]  # Prediksi kelas
+    prediction_label = class_to_label[prediction_class]  # Mapping ke label
     return prediction_label, prediction_class
 
 st.title("Aplikasi Prediksi Buah Dengan Model")
