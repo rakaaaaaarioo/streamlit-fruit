@@ -1,6 +1,8 @@
 import streamlit as st
 import pickle
 import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler
 
 file = 'fruit.xlsx'
 fruit = pd.read_excel(file)
@@ -11,27 +13,33 @@ label_to_class = {'grapefruit': 0, 'orange': 1}
 class_to_label = {v: k for k, v in label_to_class.items()}
 
 def load_model_and_scaler(model_file, scaler_file=None):
-    with open(model_file, 'rb') as f:
-        model = pickle.load(f)
-    scaler = None
+        with open('fruit_RandomForest.pkl', 'rb') as f:
+            model = pickle.load(f)
+            scaler = None
     if scaler_file:
-        with open(scaler_file, 'rb') as f:
+        with open('scaler_svm.pkl', 'rb') as f:
             scaler = pickle.load(f)
-    return model, scaler
+
+import numpy as np
 
 def predict_fruit(features, model, scaler=None):
-    import numpy as np
-    
+    # Ubah fitur ke array numpy dan reshape ke 2D
     features = np.array(features).reshape(1, -1)
+    
+    # Debugging: Periksa bentuk data
     print("Bentuk fitur untuk prediksi:", features.shape)
+    
+    # Gunakan scaler jika ada
     if scaler:
         features = scaler.transform(features)
-    print("Fitur setelah transformasi:", features)
     
+    # Prediksi kelas
     prediction_class = model.predict(features)[0]
+    
+    # Mapping kelas ke label
     prediction_label = class_to_label[prediction_class]
+    
     return prediction_label, prediction_class
-
 
 st.title("Aplikasi Prediksi Buah Dengan Model")
 st.write("Pilih algoritma yang digunakan, masukkan fitur buah untuk memprediksi jenis buah.")
