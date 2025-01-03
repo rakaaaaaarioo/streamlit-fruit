@@ -13,7 +13,8 @@ label_to_class = {'grapefruit': 0, 'orange': 1}
 class_to_label = {v: k for k, v in label_to_class.items()}
 
 def load_model_and_scaler(model_file, scaler_file=None):
-        with open('fruit_RandomForest.pkl', 'rb') as f:
+def load_model_and_scaler(model_file, scaler_file=None):
+    with open('fruit_RandomForest.pkl', 'rb') as f:
             model = pickle.load(f)
             scaler = None
     if scaler_file:
