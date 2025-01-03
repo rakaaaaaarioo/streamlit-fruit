@@ -23,9 +23,10 @@ def predict_fruit(features, model, scaler=None):
     import numpy as np
     
     features = np.array(features).reshape(1, -1)
-
+    print("Bentuk fitur untuk prediksi:", features.shape)
     if scaler:
         features = scaler.transform(features)
+    print("Fitur setelah transformasi:", features)
     
     prediction_class = model.predict(features)[0]
     prediction_label = class_to_label[prediction_class]
@@ -54,9 +55,12 @@ for col in x.columns:
     value = st.number_input(f"Masukkan nilai untuk {col}:", value=0.0)
     input_features.append(value)
 
-if all(input_features):  # Pastikan semua input ada
-    if st.button("Prediksi"):
+if st.button("Prediksi"):
+    if not all(input_features):  # Validasi input
+        st.error("Harap masukkan semua nilai fitur.")
+    else:
         label, class_index = predict_fruit(input_features, model, scaler)
         st.success(f"Model memprediksi jenis buah: {label} (Cluster: {class_index})")
-else:
-    st.warning("Harap masukkan semua nilai fitur sebelum memprediksi.")
+
+st.write("Fitur yang dimasukkan:", input_features)
+st.write("Bentuk input sebelum prediksi:", len(input_features))
